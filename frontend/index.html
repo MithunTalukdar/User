@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Resume Builder — Professional Resume Content Generator</title>
+    <meta
+      name="description"
+      content="Generate professional HR summaries, cover letters, LinkedIn summaries, career objectives and more in seconds with AI. Build, refine and export your resume content."
+    />
+    <meta name="keywords" content="AI resume builder, resume generator, cover letter, LinkedIn summary, career objective, ATS resume" />
+    <meta name="author" content="AI Resume Builder" />
+    <meta name="theme-color" content="#f4f5fb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b0d16" media="(prefers-color-scheme: dark)" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="AI Resume Builder" />
+    <meta property="og:description" content="Professional resume content generated in seconds — summaries, cover letters, objectives and more." />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="AI Resume Builder" />
+    <meta name="twitter:description" content="Professional resume content generated in seconds." />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%A0%3C/text%3E%3C/svg%3E"
+    />
+    <script>
+      ;(function () {
+        var stored = localStorage.getItem('rb_theme')
+        var dark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light'
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
