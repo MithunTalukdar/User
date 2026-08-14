@@ -43,7 +43,7 @@
 }
 
 .btn-primary:hover:not(:disabled) {
-  box-shadow: 0 10px 32px -8px rgba(91, 95, 246, 0.6);
+  box-shadow: 0 10px 32px -8px rgba(79, 70, 229, 0.6);
 }
 
 .btn-ghost {
@@ -108,7 +108,7 @@
 .toasts {
   position: fixed;
   bottom: 20px;
-  right: 20px;
+  left: 20px;
   z-index: 100;
   display: flex;
   flex-direction: column;
@@ -258,7 +258,7 @@
    ============================================================ */
 .layout {
   display: grid;
-  grid-template-columns: 350px 1fr;
+  grid-template-columns: 380px 1fr;
   gap: 24px;
   padding: 24px;
   max-width: 1440px;
@@ -292,36 +292,71 @@
 }
 
 /* ============================================================
-   Tabs
+   Modals & Popups
    ============================================================ */
-.tabs {
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: color-mix(in srgb, var(--inverse) 40%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   display: flex;
-  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 600px;
+  max-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+  animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.modal-content.chat-modal {
+  max-width: 500px;
+  height: 600px;
+  margin-left: auto;
+  margin-right: 24px;
+  margin-top: auto;
+  margin-bottom: 80px;
+}
+
+.modal-header {
+  padding: 16px 20px;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 20px;
-  overflow-x: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface-2);
 }
 
-.tabs button {
-  background: none;
-  padding: 10px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--muted);
-  border-bottom: 2px solid transparent;
-  border-radius: 0;
-  transition: color var(--transition), border-color var(--transition);
-  white-space: nowrap;
+.modal-header h2 {
+  font-size: 18px;
 }
 
-.tabs button:hover {
-  color: var(--text);
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
 }
 
-.tabs button.active {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
 }
+
+
 
 /* ============================================================
    Profile form
@@ -451,28 +486,32 @@
   gap: 8px;
 }
 
+.single-btns .btn {
+  font-size: 12px;
+  padding: 8px;
+}
+
 /* ============================================================
-   Inputs
+   Forms / Inputs
    ============================================================ */
 input,
 textarea,
 select {
-  font-family: inherit;
-  font-size: 14px;
   width: 100%;
-  padding: 9px 12px;
-  border: 1px solid var(--border);
+  padding: 10px 14px;
   border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
   background: var(--surface-solid);
   color: var(--text);
-  resize: vertical;
-  transition: border-color var(--transition), box-shadow var(--transition),
-    background var(--transition);
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color var(--transition), box-shadow var(--transition);
 }
 
-input::placeholder,
-textarea::placeholder {
-  color: color-mix(in srgb, var(--muted) 75%, transparent);
+input:hover,
+textarea:hover,
+select:hover {
+  border-color: color-mix(in srgb, var(--primary) 40%, var(--border-strong));
 }
 
 input:focus,
@@ -483,23 +522,22 @@ select:focus {
   box-shadow: var(--ring);
 }
 
-input:disabled,
-textarea:disabled,
-select:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
 }
 
 /* ============================================================
    Auth
    ============================================================ */
 .auth-wrap {
-  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
+  position: relative;
   overflow: hidden;
 }
 
@@ -507,222 +545,135 @@ select:disabled {
   position: absolute;
   border-radius: 50%;
   filter: blur(80px);
-  opacity: 0.55;
-  animation: blobMove 18s ease-in-out infinite;
-  pointer-events: none;
+  z-index: 0;
+  animation: blobMove 14s ease-in-out infinite alternate;
 }
 
 .auth-blob.b1 {
-  width: 420px;
-  height: 420px;
-  top: -80px;
-  left: -60px;
-  background: radial-gradient(circle at 30% 30%, #6d6ffd, #b06bff 60%, transparent);
+  width: 400px;
+  height: 400px;
+  background: rgba(91, 95, 246, 0.15);
+  top: -100px;
+  left: -100px;
 }
 
 .auth-blob.b2 {
-  width: 360px;
-  height: 360px;
-  bottom: -70px;
-  right: -40px;
-  background: radial-gradient(circle at 60% 40%, #f05cf4, #ff7ac2 60%, transparent);
-  animation-delay: -6s;
+  width: 500px;
+  height: 500px;
+  background: rgba(217, 70, 239, 0.1);
+  bottom: -150px;
+  right: -100px;
+  animation-delay: -5s;
 }
 
 .auth-blob.b3 {
   width: 300px;
   height: 300px;
+  background: rgba(59, 130, 246, 0.12);
   top: 40%;
-  left: 55%;
-  background: radial-gradient(circle at 50% 50%, #53b3ff, #8b5cf6 70%, transparent);
-  animation-delay: -12s;
-  opacity: 0.35;
+  left: 40%;
+  animation-delay: -2s;
 }
 
 .auth-card {
   position: relative;
-  z-index: 1;
+  z-index: 10;
   width: 100%;
   max-width: 440px;
-  padding: 36px;
+  padding: 40px;
   border-radius: var(--radius-xl);
-  background: var(--surface);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   box-shadow: var(--shadow-lg);
-  animation: scaleIn 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  text-align: center;
 }
 
 .auth-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 18px;
+  margin-bottom: 24px;
 }
 
 .auth-logo .logo {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background: var(--grad);
-  color: #fff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--grad);
+  color: #fff;
   box-shadow: var(--glow);
+  margin-bottom: 16px;
 }
 
 .auth-logo h1 {
-  font-size: 22px;
-  letter-spacing: -0.02em;
-}
-
-.auth-sub {
-  color: var(--muted);
-  margin: 0 0 24px;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.auth-toggle {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  padding: 5px;
-  margin-bottom: 22px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-}
-
-.auth-toggle button {
-  padding: 9px;
-  border-radius: 9px;
-  background: transparent;
-  color: var(--muted);
-  font-size: 14px;
-  font-weight: 600;
-  transition: all var(--transition);
-}
-
-.auth-toggle button.active {
-  background: var(--surface-solid);
-  color: var(--text);
-  box-shadow: var(--shadow-sm);
+  font-size: 24px;
 }
 
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 16px;
+  text-align: left;
 }
 
 .auth-form label {
+  display: block;
   font-size: 13px;
   font-weight: 600;
+  margin-bottom: 6px;
   color: var(--text-2);
-  margin-top: 12px;
 }
 
-.auth-form .btn {
-  margin-top: 20px;
+.auth-form button {
+  margin-top: 8px;
   padding: 12px;
   font-size: 15px;
 }
 
-.password-wrap {
-  position: relative;
-}
-
-.password-wrap input {
-  padding-right: 42px;
-}
-
-.password-toggle {
-  position: absolute;
-  right: 6px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  color: var(--muted);
-  padding: 6px;
-  border-radius: 8px;
-  display: inline-flex;
-  line-height: 0;
-}
-
-.password-toggle:hover {
-  color: var(--text);
-  background: color-mix(in srgb, var(--muted) 12%, transparent);
-}
-
-.auth-form .error {
-  font-size: 13px;
-  color: var(--danger);
-  background: var(--danger-bg);
-  border: 1px solid color-mix(in srgb, var(--danger) 25%, transparent);
-  padding: 9px 12px;
-  border-radius: var(--radius-sm);
-  margin-top: 14px;
-}
-
-.auth-form .success {
-  font-size: 13px;
-  color: var(--success);
-  background: var(--success-bg);
-  border: 1px solid color-mix(in srgb, var(--success) 25%, transparent);
-  padding: 9px 12px;
-  border-radius: var(--radius-sm);
-  margin-top: 14px;
-}
-
-.auth-features {
-  margin-top: 26px;
-  padding-top: 20px;
-  border-top: 1px dashed var(--border);
-  display: grid;
-  gap: 10px;
-}
-
-.auth-feature {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
+.auth-mode {
+  margin-top: 24px;
+  font-size: 14px;
   color: var(--text-2);
 }
 
-.auth-feature svg {
+.auth-mode button {
+  background: none;
+  padding: 0;
   color: var(--primary);
-  flex-shrink: 0;
+  font-weight: 600;
+}
+
+.auth-mode button:hover {
+  text-decoration: underline;
 }
 
 /* ============================================================
    Outputs
    ============================================================ */
 .outputs-wrap {
-  animation: fadeIn var(--transition-slow) both;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .outputs-head {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
 .outputs-head h2 {
-  font-size: 18px;
-  letter-spacing: -0.01em;
+  font-size: 22px;
+  margin-bottom: 4px;
 }
 
 .output-meta {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
-  margin-top: 2px;
 }
 
 .head-actions {
@@ -733,97 +684,82 @@ select:disabled {
 
 .tab-row {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   overflow-x: auto;
-  padding-bottom: 10px;
-  margin-bottom: 14px;
-  scrollbar-width: thin;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.tab-row::-webkit-scrollbar {
+  height: 4px;
 }
 
 .tab {
-  flex: 0 0 auto;
-  border: 1px solid var(--border);
-  background: var(--surface-2);
-  padding: 7px 13px;
+  padding: 8px 14px;
   border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
   font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-2);
   white-space: nowrap;
   transition: all var(--transition);
 }
 
 .tab:hover {
+  background: var(--surface-solid);
+  color: var(--text);
   border-color: var(--border-strong);
-  color: var(--primary);
 }
 
 .tab.active {
   background: var(--grad);
-  border-color: transparent;
   color: #fff;
-  box-shadow: var(--glow);
+  border-color: transparent;
+  box-shadow: 0 4px 12px -2px rgba(168, 139, 239, 0.4);
 }
 
 .output-pane {
+  flex: 1;
   min-height: 300px;
+  background: var(--surface-solid);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface-2);
-  padding: 20px;
-  position: relative;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+  overflow-y: auto;
 }
 
 .output-text {
-  white-space: pre-wrap;
-  word-break: break-word;
-  font-family: var(--font-mono);
-  font-size: 13.5px;
-  line-height: 1.7;
   margin: 0;
-  color: var(--text-2);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--text);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  gap: 12px;
+  color: var(--muted);
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.empty svg {
+  color: var(--border-strong);
 }
 
 .output-actions {
   display: flex;
   gap: 8px;
-  margin-top: 14px;
-  flex-wrap: wrap;
-}
-
-.skeleton-lines {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.skeleton-lines .skeleton {
-  height: 14px;
-}
-
-/* ============================================================
-   Empty state
-   ============================================================ */
-.empty {
-  color: var(--muted);
-  font-size: 14px;
-  text-align: center;
-  padding: 40px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  border: 1px dashed var(--border-strong);
-  border-radius: var(--radius);
-  background: color-mix(in srgb, var(--surface-2) 60%, transparent);
-}
-
-.empty svg {
-  color: var(--muted);
-}
-
-.empty strong {
-  color: var(--text);
+  margin-top: 16px;
 }
 
 /* ============================================================
@@ -832,170 +768,166 @@ select:disabled {
 .chat-wrap {
   display: flex;
   flex-direction: column;
-  height: 540px;
-  animation: fadeIn var(--transition-slow) both;
+  height: 100%;
 }
 
 .chat-log {
   flex: 1;
   overflow-y: auto;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px;
-  background: var(--surface-2);
+  padding-right: 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 .msg {
-  max-width: 82%;
-  padding: 10px 14px;
-  border-radius: 14px;
-  font-size: 14px;
-  line-height: 1.55;
-  white-space: pre-wrap;
-  word-break: break-word;
-  animation: scaleIn var(--transition) both;
+  max-width: 85%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  animation: slideUp var(--transition) both;
 }
 
 .msg.user {
   align-self: flex-end;
-  background: var(--grad);
+  background: var(--primary);
   color: #fff;
-  border-bottom-right-radius: 5px;
-  box-shadow: var(--glow);
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 4px 12px -4px rgba(91, 95, 246, 0.3);
 }
 
 .msg.assistant {
   align-self: flex-start;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+}
+
+.chat-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.chat-suggestions button {
   background: var(--surface-solid);
   border: 1px solid var(--border);
-  border-bottom-left-radius: 5px;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--text-2);
+  transition: all var(--transition);
+}
+
+.chat-suggestions button:hover {
+  background: var(--surface-2);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.chat-input {
+  display: flex;
+  gap: 8px;
+}
+
+.chat-input input {
+  border-radius: 999px;
+  padding-left: 20px;
+}
+
+.chat-input .btn {
+  border-radius: 999px;
+  padding: 0 20px;
 }
 
 .typing-dots {
   display: inline-flex;
   gap: 4px;
   align-items: center;
-  padding: 4px 2px;
+  height: 20px;
 }
 
 .typing-dots span {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--muted);
-  animation: pulse 1.2s infinite;
+  animation: pulse 1s infinite alternate;
 }
 
 .typing-dots span:nth-child(2) {
   animation-delay: 0.2s;
 }
-
 .typing-dots span:nth-child(3) {
   animation-delay: 0.4s;
 }
 
-.chat-suggestions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.chat-suggestions button {
-  font-size: 12px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--surface-solid);
-  color: var(--text-2);
-  transition: all var(--transition);
-}
-
-.chat-suggestions button:hover {
-  color: var(--primary);
-  border-color: var(--primary);
-  transform: translateY(-1px);
-}
-
-.chat-input {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.chat-input input {
-  flex: 1;
-}
-
 /* ============================================================
-   Saved profiles
+   Saved Profiles
    ============================================================ */
 .saved-wrap {
-  animation: fadeIn var(--transition-slow) both;
-}
-
-.saved-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.saved-head h2 {
-  font-size: 18px;
-  letter-spacing: -0.01em;
-}
-
-.saved-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
 }
 
 .saved-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--surface-solid);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px 16px;
-  background: var(--surface-2);
+  border-radius: var(--radius-lg);
   transition: all var(--transition);
 }
 
 .saved-card:hover {
   border-color: var(--border-strong);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
-.saved-main {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+.saved-info {
   min-width: 0;
+  flex: 1;
 }
 
-.saved-main strong {
-  font-size: 15px;
+.saved-info h3 {
+  font-size: 16px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.saved-main span {
-  font-size: 13.5px;
+.saved-info p {
+  font-size: 13px;
   color: var(--muted);
 }
 
-.saved-main small {
-  font-size: 12px;
-  color: var(--muted);
+.saved-meta {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-2);
 }
 
 .saved-actions {
@@ -1075,4 +1007,289 @@ select:disabled {
   .saved-actions {
     justify-content: flex-end;
   }
+}
+
+/* ============================================================
+   Main Tabs
+   ============================================================ */
+.main-tabs-header {
+  display: flex;
+  gap: 24px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.main-tab {
+  background: transparent;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 12px 0;
+  cursor: pointer;
+  position: relative;
+  transition: color var(--transition);
+}
+
+.main-tab:hover {
+  color: var(--text);
+}
+
+.main-tab.active {
+  color: var(--primary);
+}
+
+.main-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--primary);
+  border-radius: 2px 2px 0 0;
+}
+
+.main-tab-content {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ============================================================
+   Footerbar
+   ============================================================ */
+.footerbar {
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  backdrop-filter: blur(var(--glass-blur));
+  padding: 20px 24px;
+}
+
+.footer-content {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.footer-text {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.footer-links {
+  display: flex;
+  gap: 16px;
+}
+
+.footer-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.footer-links a:hover {
+  color: var(--primary);
+}
+
+/* ============================================================
+   Global Loader
+   ============================================================ */
+.global-loader-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.global-loader-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.spinner-large {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--primary-soft, color-mix(in srgb, var(--primary) 20%, transparent));
+  border-right-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.global-loader-content h3 {
+  font-size: 20px;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.global-loader-content p {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ============================================================
+   Logout Modal
+   ============================================================ */
+.logout-modal-content {
+  text-align: center;
+  padding: 24px 0 12px;
+}
+
+.logout-icon {
+  color: var(--warning);
+  margin-bottom: 16px;
+}
+
+.logout-modal-content p {
+  color: var(--text-2);
+  margin-bottom: 32px;
+  font-size: 15px;
+}
+
+.logout-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+/* ============================================================
+   Brain Loader (Futuristic Analyzing System)
+   ============================================================ */
+.brain-loader {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  color: var(--primary);
+  filter: drop-shadow(0 0 8px var(--primary));
+  animation: brainPulse 2s ease-in-out infinite;
+}
+
+.brain-loader::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--primary-2);
+  box-shadow: 0 0 10px var(--primary-2);
+  animation: brainScan 1.5s linear infinite;
+  opacity: 0.8;
+}
+
+@keyframes brainPulse {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes brainScan {
+  0% { top: 0; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Button small brain loader */
+.btn .brain-loader {
+  width: 20px;
+  height: 20px;
+  color: currentColor;
+  filter: none;
+}
+
+.btn .brain-loader::after {
+  height: 1px;
+  box-shadow: 0 0 4px currentColor;
+  background: currentColor;
+}
+
+/* Auth specific tweaks */
+.auth-toggle {
+  display: flex;
+  background: var(--surface-2);
+  border-radius: 999px;
+  padding: 4px;
+  margin: 0 auto 24px;
+  width: max-content;
+}
+
+.auth-toggle button {
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  transition: all var(--transition);
+  background: transparent;
+}
+
+.auth-toggle button.active {
+  background: var(--surface-solid);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
+.auth-card input {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface-2) 60%, transparent);
+  transition: all var(--transition);
+}
+
+.auth-card input:focus {
+  background: var(--surface-solid);
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 15px -3px var(--primary);
+}
+
+/* Password input positioning */
+.password-wrap {
+  position: relative;
+  display: block;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition), background var(--transition);
+}
+
+.password-toggle:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--muted) 15%, transparent);
+}
+
+/* Hide native browser password reveal icon (Edge/IE) */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
 }

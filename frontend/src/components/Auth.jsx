@@ -222,15 +222,17 @@ export default function Auth({ onLogin }) {
                   required
                   autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                 />
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={() => setShowPassword((s) => !s)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  title={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  <Icon name={showPassword ? 'eyeOff' : 'eye'} size={16} />
-                </button>
+                {form.password.length > 0 && (
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() => setShowPassword((s) => !s)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    title={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    <Icon name={showPassword ? 'eyeOff' : 'eye'} size={20} />
+                  </button>
+                )}
               </div>
             </>
           )}
@@ -270,7 +272,10 @@ export default function Auth({ onLogin }) {
           <button type="submit" className="btn btn-primary" disabled={loading}>
             {loading ? (
               <>
-                <span className="spinner" aria-hidden="true" /> Please wait…
+                <div className="brain-loader">
+                  <Icon name="brain" size={12} />
+                </div>
+                Analyzing…
               </>
             ) : mode === 'login' ? (
               <>

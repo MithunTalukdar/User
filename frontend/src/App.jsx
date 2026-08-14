@@ -5,6 +5,7 @@ import { ToastProvider } from './components/Toast'
 import { useDarkMode } from './hooks/useDarkMode'
 import Icon from './components/Icon'
 import ThemeToggle from './components/ThemeToggle'
+import Modal from './components/Modal'
 import './App.css'
 
 const Auth = lazy(() => import('./components/Auth'))
@@ -19,20 +20,27 @@ function LoadingScreen() {
       <div className="auth-blob b1" />
       <div className="auth-blob b2" />
       <div className="auth-blob b3" />
-      <div className="auth-card animate-up">
-        <div className="auth-logo">
-          <span className="logo">
-            <Icon name="brain" size={22} />
-          </span>
-          <h1 className="grad-text">AI Resume Builder</h1>
+      <div className="auth-card animate-up" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="brain-loader" style={{ width: 80, height: 80, marginBottom: 24 }}>
+          <Icon name="brain" size={40} />
         </div>
-        <div className="skeleton-lines">
-          <div className="skeleton" style={{ height: 20, width: '70%' }} />
-          <div className="skeleton" style={{ width: '100%' }} />
-          <div className="skeleton" style={{ width: '90%' }} />
-          <div className="skeleton" style={{ width: '100%' }} />
-          <div className="skeleton" style={{ height: 40, width: '100%', marginTop: 8 }} />
+        <h1 className="grad-text">Initializing Systems</h1>
+        <p style={{ color: 'var(--muted)', marginTop: 8 }}>Please wait while the AI starts up...</p>
+      </div>
+    </div>
+  )
+}
+
+function GlobalLoader({ isVisible }) {
+  if (!isVisible) return null;
+  return (
+    <div className="global-loader-overlay animate-in">
+      <div className="global-loader-content animate-scale">
+        <div className="brain-loader">
+          <Icon name="brain" size={28} />
         </div>
+        <h3>Analyzing & Generating</h3>
+        <p>Please wait while AI works its magic...</p>
       </div>
     </div>
   )
@@ -45,9 +53,11 @@ function Shell() {
   const [outputs, setOutputs] = useState({})
   const [allBusy, setAllBusy] = useState(false)
   const [busyType, setBusyType] = useState('')
-  const [tab, setTab] = useState('outputs')
   const [error, setError] = useState('')
   const { dark, toggle } = useDarkMode()
+
+  const [mainTab, setMainTab] = useState('content') // 'content', 'assistant', 'saved'
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false)
 
   useEffect(() => {
     if (!getToken()) {
@@ -69,8 +79,8 @@ function Shell() {
     api.logout().catch(() => {})
     setToken(null)
     setUser(null)
-    setTab('outputs')
     setError('')
+    setIsLogoutOpen(false)
   }
 
   async function generateAll() {
@@ -79,7 +89,7 @@ function Shell() {
     try {
       const { outputs: next } = await api.generateAll({ profile })
       setOutputs(next)
-      setTab('outputs')
+      setMainTab('content')
     } catch (err) {
       setError(err.message)
     } finally {
@@ -93,7 +103,7 @@ function Shell() {
     try {
       const { text } = await api.generateType({ type, profile })
       setOutputs((o) => ({ ...o, [type]: text }))
-      setTab('outputs')
+      setMainTab('content')
     } catch (err) {
       setError(err.message)
     } finally {
@@ -109,7 +119,7 @@ function Shell() {
     const { id: _id, userId: _u, createdAt: _c, variants, pinned: _p, ...rest } = p
     setProfile({ ...EMPTY_PROFILE, ...rest })
     if (variants) setOutputs(variants)
-    setTab('outputs')
+    setMainTab('content')
   }
 
   if (!checked) {
@@ -124,16 +134,12 @@ function Shell() {
     )
   }
 
-  const grouped = [
-    { key: 'outputs', label: 'Content', busy: allBusy, onGenerate: generateAll },
-    { key: 'chat', label: 'Assistant' },
-    { key: 'saved', label: 'Saved' },
-  ]
-
   const initial = (user.fullName || user.email || '?').charAt(0).toUpperCase()
 
   return (
     <div className="app">
+      <GlobalLoader isVisible={allBusy} />
+      
       <header className="topbar">
         <div className="brand">
           <span className="logo">
@@ -147,7 +153,7 @@ function Shell() {
           </span>
           <span className="username">{user.fullName || user.email}</span>
           <ThemeToggle dark={dark} onToggle={toggle} />
-          <button className="btn btn-ghost" onClick={logout}>
+          <button className="btn btn-ghost" onClick={() => setIsLogoutOpen(true)}>
             <Icon name="logout" size={16} />
             Logout
           </button>
@@ -188,7 +194,7 @@ function Shell() {
                   key={k}
                   className="btn"
                   onClick={() => generateType(k)}
-                  disabled={busyType === k}
+                  disabled={busyType === k || allBusy}
                 >
                   {busyType === k ? <span className="spinner" aria-hidden="true" /> : <Icon name="sparkles" size={15} />}
                   {busyType === k ? 'Working…' : label}
@@ -199,36 +205,57 @@ function Shell() {
         </aside>
 
         <main className="content">
-          <nav className="tabs" aria-label="Workspace sections" role="tablist">
-            {grouped.map((g) => (
-              <button
-                key={g.key}
-                className={tab === g.key ? 'active' : ''}
-                onClick={() => setTab(g.key)}
-                aria-selected={tab === g.key}
-                role="tab"
-              >
-                {g.label}
-                {g.key === 'outputs' && g.busy ? ' (…)' : ''}
-              </button>
-            ))}
-          </nav>
+          <div className="main-tabs-header">
+            <button className={`main-tab ${mainTab === 'content' ? 'active' : ''}`} onClick={() => setMainTab('content')}>
+              Content
+            </button>
+            <button className={`main-tab ${mainTab === 'assistant' ? 'active' : ''}`} onClick={() => setMainTab('assistant')}>
+              Assistant
+            </button>
+            <button className={`main-tab ${mainTab === 'saved' ? 'active' : ''}`} onClick={() => setMainTab('saved')}>
+              Saved
+            </button>
+          </div>
 
-          <Suspense fallback={<div className="skeleton-lines"><div className="skeleton" style={{ height: 160 }} /></div>}>
-            {tab === 'outputs' && (
-              <Outputs
-                outputs={outputs}
-                profile={profile}
-                onRefine={refine}
-                onAll={generateAll}
-                allBusy={allBusy}
-              />
-            )}
-            {tab === 'chat' && <Chat profile={profile} />}
-            {tab === 'saved' && <SavedProfiles onLoad={loadProfile} />}
-          </Suspense>
+          <div className="main-tab-content">
+            <Suspense fallback={<div className="skeleton-lines"><div className="skeleton" style={{ height: 160 }} /></div>}>
+              {mainTab === 'content' && (
+                <Outputs
+                  outputs={outputs}
+                  profile={profile}
+                  onRefine={refine}
+                  onAll={generateAll}
+                  allBusy={allBusy}
+                />
+              )}
+              {mainTab === 'assistant' && <Chat profile={profile} />}
+              {mainTab === 'saved' && <SavedProfiles onLoad={loadProfile} />}
+            </Suspense>
+          </div>
         </main>
       </div>
+
+      <footer className="footerbar">
+        <div className="footer-content">
+          <span className="footer-text">© 2026 AI Resume Builder. All rights reserved.</span>
+          <div className="footer-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Help</a>
+          </div>
+        </div>
+      </footer>
+
+      <Modal isOpen={isLogoutOpen} onClose={() => setIsLogoutOpen(false)} title="Confirm Logout" className="logout-modal">
+        <div className="logout-modal-content">
+          <Icon name="alert" size={48} className="logout-icon" />
+          <p>Are you sure you want to log out? Any unsaved changes may be lost.</p>
+          <div className="logout-actions">
+            <button className="btn" onClick={() => setIsLogoutOpen(false)}>Cancel</button>
+            <button className="btn btn-danger" onClick={logout}>Yes, Logout</button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }

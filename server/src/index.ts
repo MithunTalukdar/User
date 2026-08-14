@@ -30,9 +30,14 @@ app.use(errorHandler);
 
 async function start() {
   await connectDB();
-  app.listen(config.port, () => {
-    console.log(`[api] listening on http://localhost:${config.port}`);
-  });
+  // Only start the listener if not running in a serverless environment like Vercel
+  if (!process.env.VERCEL) {
+    app.listen(config.port, () => {
+      console.log(`[api] listening on http://localhost:${config.port}`);
+    });
+  }
 }
 
 start();
+
+export default app;
