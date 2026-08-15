@@ -10,7 +10,7 @@ export function getOpenAI(): OpenAI | null {
     client = new OpenAI({
       apiKey: config.openai.apiKey,
       baseURL: config.openai.baseURL,
-      timeout: 60_000,
+      timeout: 180_000,
     });
   }
   return client;

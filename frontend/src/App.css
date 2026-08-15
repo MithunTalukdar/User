@@ -1293,3 +1293,10 @@ input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
 }
+
+.msg.assistant p { margin-bottom: 8px; }
+.msg.assistant p:last-child { margin-bottom: 0; }
+.msg.assistant ul, .msg.assistant ol { margin: 8px 0; padding-left: 20px; }
+.msg.assistant li { margin-bottom: 4px; }
+.msg.assistant strong { color: var(--text); }
+.msg.assistant h1, .msg.assistant h2, .msg.assistant h3 { margin: 12px 0 6px; font-size: 1.1em; color: var(--text); }

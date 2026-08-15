@@ -57,6 +57,7 @@ function Shell() {
   const { dark, toggle } = useDarkMode()
 
   const [mainTab, setMainTab] = useState('content') // 'content', 'assistant', 'saved'
+  const [activeOutputTab, setActiveOutputTab] = useState('professionalHrSummary')
   const [isLogoutOpen, setIsLogoutOpen] = useState(false)
 
   useEffect(() => {
@@ -103,6 +104,7 @@ function Shell() {
     try {
       const { text } = await api.generateType({ type, profile })
       setOutputs((o) => ({ ...o, [type]: text }))
+      setActiveOutputTab(type)
       setMainTab('content')
     } catch (err) {
       setError(err.message)
@@ -222,6 +224,8 @@ function Shell() {
               {mainTab === 'content' && (
                 <Outputs
                   outputs={outputs}
+                  activeTab={activeOutputTab}
+                  onTabChange={setActiveOutputTab}
                   profile={profile}
                   onRefine={refine}
                   onAll={generateAll}

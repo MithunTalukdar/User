@@ -4,12 +4,12 @@ import { api } from '../api'
 import { useToast } from '../hooks/useToast'
 import Icon from './Icon'
 
-export default function Outputs({ outputs, profile, onRefine, onAll, allBusy }) {
-  const [active, setActive] = useState(OUTPUT_TYPES[0])
+export default function Outputs({ outputs, activeTab, onTabChange, profile, onRefine, onAll, allBusy }) {
   const [refining, setRefining] = useState(false)
   const [copied, setCopied] = useState(false)
   const toast = useToast()
 
+  const active = activeTab || OUTPUT_TYPES[0]
   const text = outputs[active] || ''
   const busy = allBusy || refining
   const wordCount = text ? text.trim().split(/\s+/).length : 0
@@ -93,7 +93,7 @@ export default function Outputs({ outputs, profile, onRefine, onAll, allBusy }) 
           <button
             key={t}
             className={`tab ${active === t ? 'active' : ''}`}
-            onClick={() => setActive(t)}
+            onClick={() => onTabChange && onTabChange(t)}
             role="tab"
             aria-selected={active === t}
           >

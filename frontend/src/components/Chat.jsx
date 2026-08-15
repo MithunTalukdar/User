@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { api } from '../api'
 import Icon from './Icon'
+import ReactMarkdown from 'react-markdown'
 
 const SUGGESTIONS = [
   'How do I describe my gap year?',
@@ -51,7 +52,11 @@ export default function Chat({ profile }) {
         )}
         {messages.map((m, i) => (
           <div key={i} className={`msg ${m.role}`}>
-            {m.content}
+            {m.role === 'assistant' ? (
+              <ReactMarkdown>{m.content}</ReactMarkdown>
+            ) : (
+              m.content
+            )}
           </div>
         ))}
         {busy && (
