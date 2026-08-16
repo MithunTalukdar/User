@@ -2,7 +2,6 @@ import { db } from '../config/db';
 import { UserModel } from '../models/User';
 import { ProfileModel } from '../models/Profile';
 import { AddressModel } from '../models/Address';
-import crypto from 'crypto';
 import type {
   AddressRecord,
   NewAddress,
@@ -186,6 +185,14 @@ function mapProfile(doc: MongoProfileDoc): ProfileDoc {
 let mongoRepos: Repos;
 let memoryRepos: Repos;
 
+const generateId = () => {
+  try {
+    const crypto = require('crypto');
+    if (crypto.randomUUID) return crypto.randomUUID();
+  } catch (e) {}
+  return Math.random().toString(36).substring(2) + Date.now().toString(36);
+};
+
 const memory = {
   users: new Map<string, UserRecord>(),
   profiles: new Map<string, ProfileDoc & { id: string }>(),
@@ -199,7 +206,7 @@ function buildMemoryRepos(): Repos {
       async create(data) {
         const now = new Date();
         const rec: UserRecord = {
-          id: crypto.randomUUID(),
+          id: generateId(),
           fullName: data.fullName,
           email: data.email.toLowerCase(),
           username: data.username,
@@ -247,7 +254,7 @@ function buildMemoryRepos(): Repos {
       async create(data) {
         const doc: ProfileDoc & { id: string } = {
           ...data,
-          id: crypto.randomUUID(),
+          id: generateId(),
           pinned: data.pinned ?? false,
           createdAt: new Date().toISOString(),
         };
@@ -289,7 +296,7 @@ function buildMemoryRepos(): Repos {
       async create(userId, data) {
         const doc: AddressRecord & { userId: string } = {
           ...data,
-          id: crypto.randomUUID(),
+          id: generateId(),
           userId,
           createdAt: new Date().toISOString(),
         };
