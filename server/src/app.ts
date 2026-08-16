@@ -2,10 +2,10 @@ import express from 'express'; // trigger restart 2
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import { config } from './config';
-import { connectDB } from './config/db';
-import apiRoutes from './routes';
-import { notFound, errorHandler } from './middleware/error';
+import { config } from './config/index.js';
+import { connectDB } from './config/db.js';
+import apiRoutes from './routes/index.js';
+import { notFound, errorHandler } from './middleware/error.js';
 
 const app = express();
 
