@@ -1,9 +1,6 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
-import { ApiError } from '../utils/ApiError';
 import { profileSchema } from '../validation/schema';
-import { buildResumePdf } from '../services/pdf.service';
-import { buildResumeDocx } from '../services/docx.service';
 
 function parseProfile(req: Request) {
   return profileSchema.parse(req.body.profile || {});
@@ -14,6 +11,7 @@ function sanitizeName(name: string): string {
 }
 
 export const exportPdf = asyncHandler(async (req: Request, res: Response) => {
+  const { buildResumePdf } = await import('../services/pdf.service');
   const profile = parseProfile(req);
   const outputs = req.body.outputs || {};
   const buffer = await buildResumePdf(profile, outputs);
@@ -24,6 +22,7 @@ export const exportPdf = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const exportDocx = asyncHandler(async (req: Request, res: Response) => {
+  const { buildResumeDocx } = await import('../services/docx.service');
   const profile = parseProfile(req);
   const outputs = req.body.outputs || {};
   const buffer = await buildResumeDocx(profile, outputs);
