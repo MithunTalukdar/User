@@ -2,6 +2,7 @@ import { db } from '../config/db';
 import { UserModel } from '../models/User';
 import { ProfileModel } from '../models/Profile';
 import { AddressModel } from '../models/Address';
+import crypto from 'crypto';
 import type {
   AddressRecord,
   NewAddress,
