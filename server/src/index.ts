@@ -1,43 +1,30 @@
-import express from 'express'; // trigger restart 2
-import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import { config } from './config';
-import { connectDB } from './config/db';
-import apiRoutes from './routes';
-import { notFound, errorHandler } from './middleware/error';
+import express from 'express';
 
 const app = express();
+let realApp: any = null;
+let initError: any = null;
 
-app.use(helmet());
-app.use(
-  cors({
-    origin: config.clientOrigin === '*' ? true : config.clientOrigin.split(','),
-    credentials: true,
-  }),
-);
-app.use(express.json({ limit: '2mb' }));
-if (config.nodeEnv !== 'test') app.use(morgan('dev'));
+import('./app.js')
+  .then((module) => {
+    realApp = module.default;
+  })
+  .catch((err) => {
+    initError = err;
+    console.error('Failed to load app:', err);
+  });
 
-app.get('/health', (_req, res) => {
-  res.json({ ok: true, ai: config.mockAI ? 'mock' : 'openai', service: 'ai-resume-builder' });
-});
-
-app.use('/api', apiRoutes);
-
-app.use(notFound);
-app.use(errorHandler);
-
-async function start() {
-  await connectDB();
-  // Only start the listener if not running in a serverless environment like Vercel
-  if (!process.env.VERCEL) {
-    app.listen(config.port, () => {
-      console.log(`[api] listening on http://localhost:${config.port}`);
+app.all('*', (req, res, next) => {
+  if (initError) {
+    res.status(500).json({
+      error: 'Initialization Error',
+      message: initError.message,
+      stack: initError.stack,
     });
+  } else if (realApp) {
+    realApp(req, res, next);
+  } else {
+    res.status(503).json({ error: 'Starting up, please retry in a second' });
   }
-}
-
-start();
+});
 
 export default app;
