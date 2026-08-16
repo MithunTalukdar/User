@@ -1,6 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react'
 import { api, setToken, getToken } from './api'
-import { EMPTY_PROFILE } from './profile.meta'
+import { EMPTY_PROFILE, OUTPUT_TYPES, OUTPUT_LABELS } from './profile.meta'
 import { ToastProvider } from './components/Toast'
 import { useDarkMode } from './hooks/useDarkMode'
 import Icon from './components/Icon'
@@ -185,23 +185,25 @@ function Shell() {
           </Suspense>
           <div className="single-gen">
             <h3>Generate One</h3>
-            <div className="single-btns">
-              {Object.entries({
-                professionalHrSummary: 'HR Summary',
-                coverLetter: 'Cover Letter',
-                linkedinSummary: 'LinkedIn',
-                careerObjective: 'Objective',
-              }).map(([k, label]) => (
-                <button
-                  key={k}
-                  className="btn"
-                  onClick={() => generateType(k)}
-                  disabled={busyType === k || allBusy}
-                >
-                  {busyType === k ? <span className="spinner" aria-hidden="true" /> : <Icon name="sparkles" size={15} />}
-                  {busyType === k ? 'Working…' : label}
-                </button>
-              ))}
+            <div className="single-btns" style={{ flexDirection: 'column' }}>
+              <select
+                className="btn"
+                style={{ width: '100%', textAlign: 'left', paddingRight: '24px' }}
+                value={busyType || ''}
+                onChange={(e) => {
+                  if (e.target.value) {
+                    generateType(e.target.value)
+                  }
+                }}
+                disabled={allBusy || !!busyType}
+              >
+                <option value="" disabled>{busyType ? 'Working...' : 'Select feature to generate'}</option>
+                {OUTPUT_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {OUTPUT_LABELS[type]}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </aside>
