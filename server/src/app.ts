@@ -19,6 +19,10 @@ app.use(
 app.use(express.json({ limit: '2mb' }));
 if (config.nodeEnv !== 'test') app.use(morgan('dev'));
 
+app.get('/google08d5bc3643a89d67.html', (_req, res) => {
+  res.type('text/html').send('google-site-verification: google08d5bc3643a89d67.html');
+});
+
 app.get('/health', (_req, res) => {
   res.json({ ok: true, ai: config.mockAI ? 'mock' : 'openai', service: 'ai-resume-builder' });
 });
