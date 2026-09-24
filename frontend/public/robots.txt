@@ -5,4 +5,4 @@ Disallow: /admin
 Disallow: /account
 Disallow: /reset-password
 
-Sitemap: https://ai-resume-builder.vercel.app/sitemap.xml
+Sitemap: https://myjobmekar.vercel.app/sitemap.xml

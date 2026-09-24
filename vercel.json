@@ -23,6 +23,18 @@
       "destination": "/server/src/index.ts"
     },
     {
+      "source": "/sitemap.xml",
+      "destination": "/server/src/index.ts"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/server/src/index.ts"
+    },
+    {
+      "source": "/google08d5bc3643a89d67.html",
+      "destination": "/server/src/index.ts"
+    },
+    {
       "source": "/assets/(.*)",
       "destination": "/frontend/assets/$1"
     },

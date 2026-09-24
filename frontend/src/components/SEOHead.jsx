@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-const DEFAULT_DOMAIN = 'https://ai-resume-builder.vercel.app'
+const DEFAULT_DOMAIN = 'https://myjobmekar.vercel.app'
 
 export default function SEOHead({
   title = 'AI Resume Builder — Professional Resume Content Generator',
