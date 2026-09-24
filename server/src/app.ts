@@ -24,18 +24,69 @@ app.get('/google08d5bc3643a89d67.html', (_req, res) => {
 });
 
 app.get('/sitemap.xml', (_req, res) => {
-  res.type('application/xml').send(`<?xml version="1.0" encoding="UTF-8"?>
+  res.set('Content-Type', 'text/xml; charset=utf-8');
+  res.send(`<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://myjobmekar.vercel.app/</loc><lastmod>2026-09-24</lastmod><priority>1.0</priority></url>
-  <url><loc>https://myjobmekar.vercel.app/resume-builder</loc><lastmod>2026-09-24</lastmod><priority>0.9</priority></url>
-  <url><loc>https://myjobmekar.vercel.app/ai-career-studio</loc><lastmod>2026-09-24</lastmod><priority>0.8</priority></url>
-  <url><loc>https://myjobmekar.vercel.app/career-assistant</loc><lastmod>2026-09-24</lastmod><priority>0.8</priority></url>
-  <url><loc>https://myjobmekar.vercel.app/resume-templates</loc><lastmod>2026-09-24</lastmod><priority>0.8</priority></url>
-  <url><loc>https://myjobmekar.vercel.app/cover-letter-builder</loc><lastmod>2026-09-24</lastmod><priority>0.8</priority></url>
-  <url><loc>https://myjobmekar.vercel.app/faq</loc><lastmod>2026-09-24</lastmod><priority>0.7</priority></url>
-  <url><loc>https://myjobmekar.vercel.app/about</loc><lastmod>2026-09-24</lastmod><priority>0.6</priority></url>
-  <url><loc>https://myjobmekar.vercel.app/privacy</loc><lastmod>2026-09-24</lastmod><priority>0.5</priority></url>
-  <url><loc>https://myjobmekar.vercel.app/terms</loc><lastmod>2026-09-24</lastmod><priority>0.5</priority></url>
+  <url>
+    <loc>https://myjobmekar.vercel.app/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://myjobmekar.vercel.app/resume-builder</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://myjobmekar.vercel.app/ai-career-studio</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://myjobmekar.vercel.app/career-assistant</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://myjobmekar.vercel.app/resume-templates</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://myjobmekar.vercel.app/cover-letter-builder</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://myjobmekar.vercel.app/faq</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://myjobmekar.vercel.app/about</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://myjobmekar.vercel.app/privacy</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://myjobmekar.vercel.app/terms</loc>
+    <lastmod>2026-09-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
 </urlset>`);
 });
 
