@@ -4,7 +4,17 @@ import { api } from '../api'
 import { useToast } from '../hooks/useToast'
 import Icon from './Icon'
 
-export default function Outputs({ outputs, activeTab, onTabChange, profile, onRefine, onAll, allBusy }) {
+export default function Outputs({
+  outputs,
+  activeTab,
+  onTabChange,
+  profile,
+  onRefine,
+  onAll,
+  allBusy,
+  onOpenTour,
+  onLoadDemo,
+}) {
   const [refining, setRefining] = useState(false)
   const [copied, setCopied] = useState(false)
   const toast = useToast()
@@ -19,7 +29,7 @@ export default function Outputs({ outputs, activeTab, onTabChange, profile, onRe
     try {
       const { text: next } = await api.refine({ type: active, currentText: text, variant, profile })
       onRefine(active, next)
-      toast(variant === 'improve' ? 'Content improved' : 'Content rewritten', 'success')
+      toast(variant === 'improve' ? 'Content improved ✨' : 'Content rewritten 🔄', 'success')
     } catch (err) {
       toast(err.message || 'Refinement failed', 'error')
     } finally {
@@ -30,7 +40,7 @@ export default function Outputs({ outputs, activeTab, onTabChange, profile, onRe
   async function saveCurrent() {
     try {
       await api.saveProfile({ profile, variants: outputs })
-      toast('Profile saved', 'success')
+      toast('Profile snapshot saved to Saved tab! 💾', 'success')
     } catch {
       toast('Could not save profile', 'error')
     }
@@ -39,7 +49,7 @@ export default function Outputs({ outputs, activeTab, onTabChange, profile, onRe
   async function exportDoc(kind) {
     try {
       await api.exportFile(`/api/export/${kind}`, { profile, outputs })
-      toast(`Exported ${kind.toUpperCase()}`, 'success')
+      toast(`Exported resume as ${kind.toUpperCase()}! 🚀`, 'success')
     } catch (err) {
       toast(err.message || 'Export failed', 'error')
     }
@@ -49,7 +59,7 @@ export default function Outputs({ outputs, activeTab, onTabChange, profile, onRe
     try {
       await navigator.clipboard.writeText(text)
       setCopied(true)
-      toast('Copied to clipboard', 'success')
+      toast('Copied to clipboard! 📋', 'success')
       setTimeout(() => setCopied(false), 1600)
     } catch {
       toast('Clipboard unavailable', 'error')
@@ -62,26 +72,30 @@ export default function Outputs({ outputs, activeTab, onTabChange, profile, onRe
     <div className="outputs-wrap">
       <div className="outputs-head">
         <div>
-          <h2>Generated Content</h2>
+          <div className="outputs-title-row">
+            <h2>AI Generated Content</h2>
+            <span className={`output-badge ${generatedCount > 0 ? 'active' : ''}`}>
+              {generatedCount}/{OUTPUT_TYPES.length} Generated
+            </span>
+          </div>
           <p className="output-meta">
-            {generatedCount}/{OUTPUT_TYPES.length} types generated
-            {wordCount ? ` · ${wordCount.toLocaleString()} words in view` : ''}
+            {OUTPUT_LABELS[active]} {wordCount ? `· ${wordCount.toLocaleString()} words` : ''}
           </p>
         </div>
         <div className="head-actions">
-          <button className="btn btn-primary" onClick={onAll} disabled={allBusy}>
-            {allBusy ? <span className="spinner" aria-hidden="true" /> : <Icon name="sparkles" size={15} />}
-            {allBusy ? 'Generating…' : 'Generate All'}
+          <button className="btn btn-primary btn-sparkle" onClick={onAll} disabled={allBusy}>
+            {allBusy ? <span className="spinner" aria-hidden="true" /> : <Icon name="sparkles" size={16} />}
+            {allBusy ? 'Crafting All...' : '⚡ Generate All (12 Assets)'}
           </button>
-          <button className="btn" onClick={saveCurrent} disabled={generatedCount === 0}>
+          <button className="btn" onClick={saveCurrent} disabled={generatedCount === 0} title="Save to profile library">
             <Icon name="bookmark" size={15} />
-            Save
+            Save Draft
           </button>
-          <button className="btn" onClick={() => exportDoc('pdf')} disabled={generatedCount === 0}>
+          <button className="btn btn-export" onClick={() => exportDoc('pdf')} disabled={generatedCount === 0} title="Download PDF format">
             <Icon name="download" size={15} />
             PDF
           </button>
-          <button className="btn" onClick={() => exportDoc('docx')} disabled={generatedCount === 0}>
+          <button className="btn btn-export" onClick={() => exportDoc('docx')} disabled={generatedCount === 0} title="Download Word DOCX format">
             <Icon name="file" size={15} />
             DOCX
           </button>
@@ -89,17 +103,21 @@ export default function Outputs({ outputs, activeTab, onTabChange, profile, onRe
       </div>
 
       <div className="tab-row" role="tablist" aria-label="Content types">
-        {OUTPUT_TYPES.map((t) => (
-          <button
-            key={t}
-            className={`tab ${active === t ? 'active' : ''}`}
-            onClick={() => onTabChange && onTabChange(t)}
-            role="tab"
-            aria-selected={active === t}
-          >
-            {OUTPUT_LABELS[t]}
-          </button>
-        ))}
+        {OUTPUT_TYPES.map((t) => {
+          const isDone = Boolean((outputs[t] || '').trim())
+          return (
+            <button
+              key={t}
+              className={`tab ${active === t ? 'active' : ''} ${isDone ? 'has-content' : ''}`}
+              onClick={() => onTabChange && onTabChange(t)}
+              role="tab"
+              aria-selected={active === t}
+            >
+              {isDone && <span className="tab-dot" />}
+              {OUTPUT_LABELS[t]}
+            </button>
+          )
+        })}
       </div>
 
       <div className="output-pane">
@@ -113,35 +131,82 @@ export default function Outputs({ outputs, activeTab, onTabChange, profile, onRe
             <div className="skeleton" style={{ width: '60%' }} />
           </div>
         ) : generatedCount === 0 ? (
-          <p className="empty">
-            <Icon name="sparkles" size={26} />
-            Fill in your profile and press <strong>Generate All</strong> to create content for every
-            section, or open a tab and generate a single piece.
-          </p>
+          <div className="empty-guide-card">
+            <div className="empty-guide-header">
+              <div className="empty-logo-box">
+                <img src="/logo-icon.png" alt="ResumeAI Bulb" className="empty-guide-logo-img bulb-icon" />
+              </div>
+              <h3>Ready to craft your resume & HR summary?</h3>
+              <p>
+                Fill your details in the left sidebar and click <strong>Generate All</strong>, or explore how everything works below!
+              </p>
+            </div>
+
+            <div className="empty-guide-steps">
+              <div className="empty-step-item">
+                <div className="empty-step-num">1</div>
+                <div>
+                  <strong>Input Details</strong>
+                  <p>Add skills, experience & target role on the left sidebar.</p>
+                </div>
+              </div>
+              <div className="empty-step-item">
+                <div className="empty-step-num">2</div>
+                <div>
+                  <strong>Click Generate</strong>
+                  <p>AI writes 12 tailored versions (HR, ATS, Cover Letter, Bio, etc.).</p>
+                </div>
+              </div>
+              <div className="empty-step-item">
+                <div className="empty-step-num">3</div>
+                <div>
+                  <strong>Polish & Export</strong>
+                  <p>Refine with AI, copy with 1 click, or export to PDF/DOCX.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="empty-guide-actions">
+              <button className="btn btn-primary" onClick={onAll} disabled={allBusy}>
+                <Icon name="sparkles" size={16} />
+                Generate All Now
+              </button>
+              {onOpenTour && (
+                <button className="btn btn-ghost" onClick={onOpenTour}>
+                  <Icon name="compass" size={16} />
+                  View Interactive Tour
+                </button>
+              )}
+            </div>
+          </div>
         ) : text ? (
-          <pre className="output-text">{text}</pre>
+          <div className="output-content-area">
+            <pre className="output-text">{text}</pre>
+          </div>
         ) : (
-          <p className="empty">
-            <Icon name="file" size={26} />
-            Not generated yet. Select a type above or generate it individually.
-          </p>
+          <div className="empty-single-section">
+            <Icon name="file" size={32} />
+            <h4>{OUTPUT_LABELS[active]} not generated yet</h4>
+            <p>Use the "Generate One" selector on the sidebar or click "Generate All" to craft this piece.</p>
+          </div>
         )}
       </div>
 
       <div className="output-actions">
-        <button className="btn" onClick={() => doRefine('improve')} disabled={busy || !text}>
+        <button className="btn btn-refine" onClick={() => doRefine('improve')} disabled={busy || !text}>
           {refining ? <span className="spinner" aria-hidden="true" /> : <Icon name="sparkles" size={15} />}
-          {refining ? 'Refining…' : 'Improve'}
+          {refining ? 'Refining…' : '✨ Improve Tone'}
         </button>
-        <button className="btn" onClick={() => doRefine('rewrite')} disabled={busy || !text}>
+        <button className="btn btn-refine" onClick={() => doRefine('rewrite')} disabled={busy || !text}>
           <Icon name="refresh" size={15} />
-          Rewrite
+          🔄 Rewrite Alternative
         </button>
         <button className="btn btn-copy" onClick={copyText} disabled={!text}>
           <Icon name={copied ? 'check' : 'copy'} size={15} />
-          {copied ? 'Copied' : 'Copy'}
+          {copied ? 'Copied to Clipboard!' : 'Copy Text'}
         </button>
       </div>
     </div>
   )
 }
+

@@ -135,6 +135,32 @@ const ICONS = {
   ),
   chevronDown: <path d="M6 9l6 6 6-6" />,
   chevronRight: <path d="M9 18l6-6-6-6" />,
+  chevronLeft: <path d="M15 18l-6-6 6-6" />,
+  helpCircle: (
+    <>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01" />
+    </>
+  ),
+  compass: (
+    <>
+      <circle cx="12" cy="12" r="10" />
+      <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+    </>
+  ),
+  zap: <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />,
+  lightbulb: (
+    <>
+      <path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A6 6 0 106 10c0 1.5.5 2.5 1.5 3.5.76.76 1.23 1.52 1.41 2.5" />
+    </>
+  ),
+  wand: (
+    <>
+      <path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8L19 13M17.8 6.2L19 5M3 21l9-9M12.2 6.2L11 5" />
+    </>
+  ),
+  arrowRight: <path d="M5 12h14M12 5l7 7-7 7" />,
+  arrowLeft: <path d="M19 12H5M12 19l-7-7 7-7" />,
   pencil: (
     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
   ),

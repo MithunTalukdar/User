@@ -45,22 +45,37 @@ export default function Chat({ profile }) {
     <div className="chat-wrap">
       <div className="chat-log" role="log" aria-live="polite" aria-label="Chat messages">
         {messages.length === 0 && (
-          <p className="empty">
-            <Icon name="chat" size={26} />
-            Ask me anything about resumes, interviews, LinkedIn, or your career.
-          </p>
+          <div className="empty chat-empty-box">
+            <div className="chat-empty-logo-wrap">
+              <img src="/logo-icon.png" alt="ResumeAI Bot" className="chat-empty-logo" />
+            </div>
+            <h3>ResumeAI Career Coach</h3>
+            <p>
+              Ask me anything about tailoring your resume, optimizing HR keywords, preparing for interviews, or writing cover letters.
+            </p>
+          </div>
         )}
         {messages.map((m, i) => (
           <div key={i} className={`msg ${m.role}`}>
-            {m.role === 'assistant' ? (
-              <ReactMarkdown>{m.content}</ReactMarkdown>
-            ) : (
-              m.content
+            {m.role === 'assistant' && (
+              <div className="bot-avatar-badge">
+                <img src="/logo-icon.png" alt="AI" className="bot-avatar-img" />
+              </div>
             )}
+            <div className="msg-content">
+              {m.role === 'assistant' ? (
+                <ReactMarkdown>{m.content}</ReactMarkdown>
+              ) : (
+                m.content
+              )}
+            </div>
           </div>
         ))}
         {busy && (
           <div className="msg assistant typing">
+            <div className="bot-avatar-badge">
+              <img src="/logo-icon.png" alt="AI" className="bot-avatar-img" />
+            </div>
             <span className="typing-dots" aria-label="Assistant is typing">
               <span />
               <span />
